@@ -15,6 +15,10 @@ digH = []
 
 t_fine = 0.0
 
+pascal = 0
+Thermal = 0
+Humidity = 0
+
 
 def writeReg(reg_address, data):
 	bus.write_byte_data(i2c_address,reg_address,data)
@@ -72,9 +76,14 @@ def readData():
 	compensate_H(hum_raw)
 	
 	print (pascal)
-	print (Thermal)
-	print (Humidity)
+	print (thermal)
+	print (humidity)
+	with open('test.csv', 'w') as csv_file:
+            fieldnames = ['気圧', '気温','湿度']
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
 	
+            csv_file.write("{},{},{}".format(pascal,thermal,humidity))
 	
 
 def compensate_P(adc_P):
@@ -112,9 +121,9 @@ def compensate_T(adc_T):
 	t_fine = v1 + v2
 	temperature = t_fine / 5120.0
 	
-	Thermal = "%-6.2f ℃" % (temperature)#temperatureが変数　%-6.2fで四捨五入
+	thermal = "%-6.2f ℃" % (temperature)#temperatureが変数　%-6.2fで四捨五入
 	
-	global Thermal
+	global thermal
 
 def compensate_H(adc_H):
 	global t_fine
@@ -128,8 +137,8 @@ def compensate_H(adc_H):
 		var_h = 100.0
 	elif var_h < 0.0:
 		var_h = 0.0
-	Humidity = "%6.2f ％" % (var_h)
-	global Humidity
+	humidity = "%6.2f ％" % (var_h)
+	global humidity
 
 
 def setup():
@@ -140,6 +149,7 @@ def setup():
 	t_sb   = 5			#Tstandby 1000ms
 	filter = 0			#Filter off
 	spi3w_en = 0			#3-wire SPI Disable
+
 
 	ctrl_meas_reg = (osrs_t << 5) | (osrs_p << 2) | mode
 	config_reg    = (t_sb << 5) | (filter << 2) | spi3w_en
