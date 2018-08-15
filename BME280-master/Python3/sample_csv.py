@@ -1,8 +1,9 @@
 #coding: utf-8
 
 from smbus2 import SMBus
-import datetime
+#import datetime
 import csv
+import time
 
 bus_number  = 1
 i2c_address = 0x76
@@ -18,6 +19,7 @@ t_fine = 0.0
 pascal = 0
 thermal = 0
 humidity = 0
+timedata = 0
 
 
 def writeReg(reg_address, data):
@@ -74,24 +76,20 @@ def readData():
 	compensate_T(temp_raw)
 	compensate_P(pres_raw)
 	compensate_H(hum_raw)
-	time()
+	#now()
             
 	
 	print (pascal)
 	print (thermal)
 	print (humidity)
 	
-	with open('test.csv', 'w') as csv_file:
-            fieldnames =['気圧', '気温','湿度']
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-            writer.writeheader()
-            csv_file.write("{},{},{}".format(time,pascal,thermal,humidity))
-                   
-def time():
-    global time
+	with open('test.csv', 'a') as csv_file:
+                csv_file.write("{},{},{}".format(pascal,thermal,humidity))
+'''                   
+def now():
+    global timedata
     
-    time = datetime.datetime.now()
-    print(time)
+   timedata = datetime.datetime.now()'''
 	
 
 def compensate_P(adc_P):
@@ -166,24 +164,21 @@ def setup():
 	writeReg(0xF2,ctrl_hum_reg)
 	writeReg(0xF4,ctrl_meas_reg)
 	writeReg(0xF5,config_reg)
-	
+    
 	with open('test.csv', 'w') as csv_file:
-            fieldnames =['気圧', '気温','湿度']
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-            writer.writeheader()
+                fieldnames =['日時','気圧', '気温','湿度']
+                writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                writer.writeheader()
 
-
-setup()
-get_calib_param()
-
-
-if __name__ == '__main__':
-	try:
-		readData()
-	except KeyboardInterrupt:
-		pass
-
-
-
-
-
+for i in range(6):
+    setup()
+    get_calib_param()
+    
+    
+    if __name__ == '__main__':
+	    try:
+	            readData()
+	    except KeyboardInterrupt:
+		    pass
+    
+    time.sleep(10)
