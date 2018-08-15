@@ -1,7 +1,7 @@
 #coding: utf-8
 
 from smbus2 import SMBus
-import time
+import datetime
 import csv
 
 bus_number  = 1
@@ -16,8 +16,8 @@ digH = []
 t_fine = 0.0
 
 pascal = 0
-Thermal = 0
-Humidity = 0
+thermal = 0
+humidity = 0
 
 
 def writeReg(reg_address, data):
@@ -74,16 +74,24 @@ def readData():
 	compensate_T(temp_raw)
 	compensate_P(pres_raw)
 	compensate_H(hum_raw)
+	time()
+            
 	
 	print (pascal)
 	print (thermal)
 	print (humidity)
+	
 	with open('test.csv', 'w') as csv_file:
-            fieldnames = ['気圧', '気温','湿度']
+            fieldnames =['気圧', '気温','湿度']
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
             writer.writeheader()
-	
-            csv_file.write("{},{},{}".format(pascal,thermal,humidity))
+            csv_file.write("{},{},{}".format(time,pascal,thermal,humidity))
+                   
+def time():
+    global time
+    
+    time = datetime.datetime.now()
+    print(time)
 	
 
 def compensate_P(adc_P):
@@ -158,6 +166,11 @@ def setup():
 	writeReg(0xF2,ctrl_hum_reg)
 	writeReg(0xF4,ctrl_meas_reg)
 	writeReg(0xF5,config_reg)
+	
+	with open('test.csv', 'w') as csv_file:
+            fieldnames =['気圧', '気温','湿度']
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
 
 
 setup()
