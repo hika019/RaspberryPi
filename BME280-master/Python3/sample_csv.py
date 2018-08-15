@@ -83,8 +83,8 @@ def readData():
 	print (thermal)
 	print (humidity)
 	
-	with open('test.csv', 'a') as csv_file:
-                csv_file.write("{},{},{}".format(pascal,thermal,humidity))
+	with open('test.csv', mode = 'a', ) as csv_file:
+                csv_file.write('{},{},{}\n'.format(pascal,thermal,humidity))
 '''                   
 def now():
     global timedata
@@ -166,12 +166,13 @@ def setup():
 	writeReg(0xF5,config_reg)
     
 	with open('test.csv', 'w') as csv_file:
-                fieldnames =['日時','気圧', '気温','湿度']
+                fieldnames =['気圧', '気温','湿度']
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
 
-for i in range(6):
-    setup()
+
+setup()
+for i in range(3):
     get_calib_param()
     
     
