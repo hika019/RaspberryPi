@@ -77,11 +77,11 @@ def readData():
 	compensate_P(pres_raw)
 	compensate_H(hum_raw)
 	now()
-            
-	
-	print (pascal)
-	print (thermal)
-	print (humidity)
+        
+	print(timedata)
+	print(pascal)
+	print(thermal)
+	print(humidity)
 	
 	with open('test.csv', mode = 'a', ) as csv_file:
                 csv_file.write('{},{},{},{}\n'.format(timedata,pascal,thermal,humidity))
@@ -113,7 +113,7 @@ def compensate_P(adc_P):
 	v2 = ((pressure / 4.0) * digP[7]) / 8192.0
 	pressure = pressure + ((v1 + v2 + digP[6]) / 16.0)
 	
-	pascal = "%7.2f hPa" % (pressure/100)
+	pascal = "%7.2f " % (pressure/100)
 	
 	#print(compensate_P)
 	global pascal
@@ -126,7 +126,7 @@ def compensate_T(adc_T):
 	t_fine = v1 + v2
 	temperature = t_fine / 5120.0
 	
-	thermal = "%-6.2f ℃" % (temperature)#temperatureが変数　%-6.2fで四捨五入
+	thermal = "%-6.2f " % (temperature)#temperatureが変数　%-6.2fで四捨五入
 	
 	global thermal
 
@@ -142,7 +142,7 @@ def compensate_H(adc_H):
 		var_h = 100.0
 	elif var_h < 0.0:
 		var_h = 0.0
-	humidity = "%6.2f ％" % (var_h)
+	humidity = "%6.2f " % (var_h)
 	global humidity
 
 
@@ -164,21 +164,25 @@ def setup():
 	writeReg(0xF4,ctrl_meas_reg)
 	writeReg(0xF5,config_reg)
     
-	with open('test.csv', 'w') as csv_file:
-                fieldnames =['日時','気圧', '気温','湿度']
+    
+
+
+
+
+with open('test.csv', 'w') as csv_file:
+                fieldnames =['日時','気圧(hPa)', '気温(℃)','湿度(%)']
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
 
-
 setup()
-for i in range(3):
-    get_calib_param()
+get_calib_param()
+if __name__ == '__main__':
+    try:
+        
+       for i in range(2):   
+            readData()
+            time.sleep(10)
+    except KeyboardInterrupt:
+       pass
     
-    
-    if __name__ == '__main__':
-	    try:
-	            readData()
-	    except KeyboardInterrupt:
-		    pass
-    
-    time.sleep(10)
+print('------終了------')
