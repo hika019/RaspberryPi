@@ -5,7 +5,7 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(8,GPIO.OUT)#Red
 GPIO.setup(10,GPIO.OUT) #blue
 
-for i in range(5):
+while True:
     GPIO.output(8,GPIO.HIGH)
     time.sleep(6)
     
