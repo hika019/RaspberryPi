@@ -55,8 +55,8 @@ def HIGH(times, count):
     global counter
     for i in range(count):
         counter = counter + 1
-        chanels = pin(counter)
-        GPIO.output(chanels, GPIO.HIGH)
+        channels = pin(counter)
+        GPIO.output(channels, GPIO.HIGH)
         time.sleep(times)
         clean()
         if counter == 9:
